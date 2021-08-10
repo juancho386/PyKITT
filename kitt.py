@@ -1,56 +1,66 @@
 #!/usr/bin/python3.6
 import pygame
-pygame.init()
-pygame.display.set_caption("KITT")
+class Kitt(object):
+	"""docstring for Kitt."""
 
-#setup
-step=15
-lucesQty=8
-lightsOn=[(0x88,0,0),(0xCC,0,0),(0xFF,0,0)]
-square={
-	"width":50,
-	"height":30
-}
+	def __init__(self):
+		self.clock_tick = 20
+		self.step = 10
+		self.lucesQty = 8
+		self.lightsOn = [(0x88,0,0),(0xCC,0,0),(0xFF,0,0)]
+		self.square={
+			"width": 30,
+			"height": 20
+		}
 
+	def addLight(self,color):
+		self.lightsOn.append(color)
 
-# and go...
-pantalla = pygame.display.set_mode((
-	(square["width"]+step)*lucesQty+step,
-	square["height"]+step*2
-))
+	def run(self):
+		pygame.init()
+		pygame.display.set_caption("KITT")
 
-# inicializa luces
-luces = []
-for i in range(len(lightsOn)):
-	luces.append({"x":step+(square["width"]+step)*i, "color":lightsOn[i], "dir":"ltr"})
+		pantalla = pygame.display.set_mode((
+			(self.square["width"]+self.step) * self.lucesQty + self.step,
+			self.square["height"] + self.step * 2
+		))
 
-termina = False
-reloj = pygame.time.Clock()
-while not termina:
-	# Eventos
-	for evento in pygame.event.get():
-		if evento.type == pygame.QUIT:
-			termina = True
+		# inicializa luces
+		luces = []
+		for i in range(len(self.lightsOn)):
+			luces.append({
+				"x": self.step+(self.square["width"] + self.step)*i,
+				"color":self.lightsOn[i],
+				"dir":"ltr"
+			})
 
-	# Logica
-	for luz in range(len(luces)):
-		if luces[luz]["dir"]=="ltr":
-			if luces[luz]["x"] > (square["width"]+step)*(lucesQty-1):
-				luces[luz]["dir"]="rtl"
-			else:
-				luces[luz]["x"]=luces[luz]["x"]+square["width"]+step
-		if luces[luz]["dir"]=="rtl":
-			if luces[luz]["x"]<square["width"]+step:
-				luces[luz]["dir"]="ltr"
-				luces[luz]["x"]=luces[luz]["x"]+square["width"]+step
-			else:
-				luces[luz]["x"]=luces[luz]["x"]-square["width"]-step
+		termina = False
+		reloj = pygame.time.Clock()
+		while not termina:
+			# Eventos
+			for evento in pygame.event.get():
+				if evento.type == pygame.QUIT:
+					termina = True
 
-	# Dibujo
-	pantalla.fill((0,0,0))
-	for luz in range(len(luces)):
-		pygame.draw.rect(pantalla, luces[luz]["color"], [
-			luces[luz]["x"], step, square["width"], square["height"]
-		])
-	pygame.display.flip()
-	reloj.tick(8)
+			# Logica
+			for luz in range(len(luces)):
+				if luces[luz]["dir"]=="ltr":
+					if luces[luz]["x"] > (self.square["width"] + self.step)*(self.lucesQty-1):
+						luces[luz]["dir"]="rtl"
+					else:
+						luces[luz]["x"]=luces[luz]["x"]+self.square["width"]+self.step
+				if luces[luz]["dir"]=="rtl":
+					if luces[luz]["x"]<self.square["width"]+self.step:
+						luces[luz]["dir"]="ltr"
+						luces[luz]["x"]=luces[luz]["x"]+self.square["width"]+self.step
+					else:
+						luces[luz]["x"]=luces[luz]["x"]-self.square["width"]-self.step
+
+			# Dibujo
+			pantalla.fill((0,0,0))
+			for luz in range(len(luces)):
+				pygame.draw.rect(pantalla, luces[luz]["color"], [
+					luces[luz]["x"], self.step, self.square["width"], self.square["height"]
+				])
+			pygame.display.flip()
+			reloj.tick(self.clock_tick)
